@@ -6,7 +6,9 @@ O motor de cálculo é escrito em Java com Spring Boot e exposto como API REST. 
 
 	
 Demonstração online	https://ampere-hub.onrender.com/
+
 Documentação da API	https://ampere-hub.onrender.com/docs
+
 Código-fonte	https://github.com/caiquefaro/ampere-hub
 
 ---
