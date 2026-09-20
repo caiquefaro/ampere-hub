@@ -4,10 +4,6 @@ Plataforma web que reúne cinco cálculos do dia a dia de quem trabalha com inst
 
 O motor de cálculo é escrito em Java com Spring Boot e exposto como API REST. A interface é HTML e CSS puros, sem framework de frontend.
 
-**Demonstração:** _(coloque aqui o link do deploy)_
-
-![Captura da tela inicial](docs/capa.png)
-
 ---
 
 ## Por que este projeto existe
@@ -50,7 +46,7 @@ A maioria dos cálculos elétricos ainda é feita em planilhas soltas, cada uma 
 Pré-requisitos: JDK 21 e Maven 3.9.
 
 ```bash
-git clone https://github.com/SEU-USUARIO/ampere-hub.git
+git clone https://github.com/CaiqueFaro/ampere-hub.git
 cd ampere-hub
 mvn spring-boot:run
 ```
