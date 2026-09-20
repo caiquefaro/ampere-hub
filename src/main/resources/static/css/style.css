@@ -1,0 +1,445 @@
+/* Ampère Hub — paleta de prancha de projeto elétrico:
+   tinta azul sobre papel frio, cobre como acento (material do condutor). */
+
+:root {
+  --tinta: #0d1b2e;
+  --tinta-media: #3c4c63;
+  --tinta-fraca: #8895a8;
+  --papel: #e6ebf1;
+  --superficie: #ffffff;
+  --linha: #c9d3de;
+  --cobre: #a85b26;
+  --cobre-claro: #f3e3d6;
+  --energizado: #14707f;
+
+  --verde: #2f6b3a;
+  --amarelo: #a97a00;
+  --vermelho: #b23b32;
+
+  --display: 'Archivo', system-ui, sans-serif;
+  --texto: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --largura: 1180px;
+  --raio: 3px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--texto);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- topo ---------- */
+
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 14px 32px;
+  background: rgba(230, 235, 241, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--linha);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.015em;
+  color: var(--tinta);
+  text-decoration: none;
+}
+
+.marca-simbolo { width: 19px; height: 19px; fill: var(--cobre); }
+
+.menu { display: flex; gap: 24px; margin-right: auto; flex-wrap: wrap; }
+
+.menu a,
+.link-docs {
+  color: var(--tinta-media);
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid transparent;
+}
+
+.menu a:hover, .link-docs:hover { color: var(--tinta); border-bottom-color: var(--cobre); }
+
+.link-docs { font-family: var(--mono); font-size: 13px; }
+
+/* ---------- capa ---------- */
+
+.capa {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 72px 32px 48px;
+}
+
+.capa-texto { max-width: 33em; }
+
+h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+.capa-texto p {
+  font-size: 1.08rem;
+  color: var(--tinta-media);
+  margin: 0;
+  max-width: 44em;
+}
+
+/* diagrama unifilar */
+
+.unifilar { margin: 56px 0 0; }
+
+.unifilar svg { width: 100%; height: auto; overflow: visible; }
+
+.barramento {
+  stroke: var(--tinta);
+  stroke-width: 2;
+  stroke-dasharray: 880;
+  stroke-dashoffset: 880;
+  animation: energizar 1.4s cubic-bezier(.4, 0, .2, 1) .25s forwards;
+}
+
+@keyframes energizar { to { stroke-dashoffset: 0; } }
+
+.no circle, .no rect {
+  fill: var(--superficie);
+  stroke: var(--tinta);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: fill .18s, stroke .18s;
+}
+
+.no .ramal { stroke: var(--tinta); stroke-width: 2; }
+
+.no:hover circle, .no:hover rect,
+.no:focus-visible circle, .no:focus-visible rect { fill: var(--cobre-claro); stroke: var(--cobre); }
+
+.no-icone {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--tinta);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.no-rotulo {
+  font-family: var(--texto);
+  font-size: 15px;
+  font-weight: 500;
+  fill: var(--tinta-media);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.unifilar figcaption {
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--tinta-fraca);
+}
+
+/* ---------- módulos ---------- */
+
+.modulo {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 64px 32px;
+  border-top: 1px solid var(--linha);
+}
+
+.modulo-cabeca { max-width: 52em; margin-bottom: 36px; }
+
+.modulo-cabeca h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+.modulo-cabeca p { margin: 0; color: var(--tinta-media); max-width: 48em; }
+
+.painel {
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ---------- formulários ---------- */
+
+.entradas {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.entradas label {
+  display: grid;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--tinta-media);
+}
+
+.entradas input,
+.entradas select {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tinta);
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 9px 10px;
+  width: 100%;
+}
+
+.entradas select { font-family: var(--texto); }
+
+.entradas input:focus-visible,
+.entradas select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--cobre);
+  outline-offset: 2px;
+}
+
+.entradas fieldset {
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 14px;
+  margin: 0;
+}
+
+.entradas legend { font-size: 13px; font-weight: 600; color: var(--tinta); padding: 0 6px; }
+
+.campo-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.campo-triplo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.btn-principal,
+.btn-secundario {
+  font-family: var(--texto);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--raio);
+  padding: 11px 18px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.btn-principal { background: var(--tinta); color: var(--papel); border: 1px solid var(--tinta); }
+.btn-principal:hover { background: var(--cobre); border-color: var(--cobre); }
+
+.btn-secundario { background: transparent; color: var(--tinta); border: 1px dashed var(--tinta-fraca); }
+.btn-secundario:hover { border-color: var(--cobre); color: var(--cobre); }
+
+/* linhas de equipamento */
+
+.lista-equipamentos { display: grid; gap: 12px; }
+
+.equipamento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  position: relative;
+}
+
+.equipamento .nome-campo { grid-column: 1 / -1; }
+
+.remover {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--tinta-fraca);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.remover:hover { color: var(--vermelho); }
+
+/* ---------- saídas ---------- */
+
+.saidas { min-height: 120px; }
+
+.vazio {
+  color: var(--tinta-fraca);
+  font-size: 15px;
+  border: 1px dashed var(--linha);
+  border-radius: var(--raio);
+  padding: 28px;
+  margin: 0;
+}
+
+.destaque {
+  background: var(--tinta);
+  color: var(--papel);
+  border-radius: var(--raio);
+  padding: 26px 28px;
+  margin-bottom: 18px;
+}
+
+.destaque .rotulo { font-size: 13.5px; color: #9fb0c4; margin: 0 0 6px; }
+
+.destaque .numero {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.destaque .numero .unidade { font-size: 0.42em; font-weight: 500; margin-left: 8px; color: #9fb0c4; }
+
+.destaque .nota { margin: 12px 0 0; font-size: 14.5px; color: #c3cfdd; }
+
+.grade-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1px;
+  background: var(--linha);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.metrica { background: var(--superficie); padding: 16px 18px; }
+.metrica dt { font-size: 13px; color: var(--tinta-media); margin-bottom: 4px; }
+.metrica dd {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1.22rem;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.metrica dd .unidade { font-size: 0.62em; font-weight: 500; color: var(--tinta-fraca); margin-left: 4px; }
+.metrica.acento dd { color: var(--cobre); }
+
+table.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  font-size: 14.5px;
+  margin-bottom: 18px;
+}
+
+.tabela th, .tabela td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--linha); }
+.tabela th { font-size: 12.5px; font-weight: 600; color: var(--tinta-media); }
+.tabela tr:last-child td { border-bottom: none; }
+.tabela td.num { font-family: var(--mono); font-weight: 500; text-align: right; }
+
+.barra-fundo { display: block; height: 5px; background: var(--linha); border-radius: 3px; margin-top: 5px; }
+.barra-fundo i { display: block; height: 100%; background: var(--cobre); border-radius: 3px; }
+
+.selo {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid currentColor;
+}
+.selo.ok { color: var(--verde); }
+.selo.atencao { color: var(--amarelo); }
+.selo.alerta { color: var(--vermelho); }
+
+.comentario {
+  background: var(--cobre-claro);
+  border-left: 3px solid var(--cobre);
+  padding: 14px 18px;
+  font-size: 14.5px;
+  color: #6b3a17;
+  border-radius: 0 var(--raio) var(--raio) 0;
+}
+
+.erro {
+  background: #fbeceb;
+  border-left: 3px solid var(--vermelho);
+  padding: 16px 18px;
+  border-radius: 0 var(--raio) var(--raio) 0;
+}
+.erro p { margin: 0 0 6px; font-weight: 600; color: var(--vermelho); }
+.erro ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--tinta-media); }
+
+.carregando { color: var(--energizado); font-size: 15px; padding: 24px 0; }
+
+/* ---------- histórico e rodapé ---------- */
+
+.painel-simples { display: grid; gap: 18px; justify-items: start; }
+.painel-simples > div { width: 100%; }
+
+.rodape {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 44px 32px 72px;
+  border-top: 1px solid var(--linha);
+  font-size: 14px;
+  color: var(--tinta-media);
+}
+
+.rodape p { margin: 0 0 10px; }
+.rodape .aviso { color: var(--tinta-fraca); max-width: 62em; font-size: 13.5px; }
+
+/* ---------- responsivo e acessibilidade ---------- */
+
+@media (max-width: 900px) {
+  .painel { grid-template-columns: 1fr; }
+  .topo { gap: 18px; padding: 12px 20px; }
+  .menu { gap: 16px; font-size: 14px; }
+  .capa { padding: 48px 20px 32px; }
+  .modulo { padding: 48px 20px; }
+  .rodape { padding: 32px 20px 56px; }
+}
+
+@media (max-width: 560px) {
+  .campo-triplo { grid-template-columns: 1fr; }
+  .link-docs { display: none; }
+  .unifilar svg { min-width: 560px; }
+  .unifilar { overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .barramento { animation: none; stroke-dashoffset: 0; }
+  * { transition-duration: .01ms !important; }
+}

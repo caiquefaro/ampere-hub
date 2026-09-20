@@ -1,0 +1,25 @@
+services:
+  banco:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: amperehub
+      POSTGRES_USER: amperehub
+      POSTGRES_PASSWORD: amperehub
+    ports:
+      - "5432:5432"
+    volumes:
+      - dados:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - banco
+    environment:
+      DATABASE_URL: jdbc:postgresql://banco:5432/amperehub
+      DB_USER: amperehub
+      DB_PASSWORD: amperehub
+    ports:
+      - "8080:8080"
+
+volumes:
+  dados:

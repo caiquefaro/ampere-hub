@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ampère Hub — análise para instalações elétricas</title>
+<meta name="description" content="Calcule consumo, tarifa branca, geração fotovoltaica, condutores e fator de potência em um só lugar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="topo">
+  <a class="marca" href="#inicio">
+    <svg class="marca-simbolo" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 4 14h6.2L9.5 22 20 9.6h-6.9z"/></svg>
+    <span>Ampère Hub</span>
+  </a>
+  <nav class="menu" aria-label="Módulos">
+    <a href="#consumo">Consumo</a>
+    <a href="#tarifa">Tarifa branca</a>
+    <a href="#solar">Solar</a>
+    <a href="#condutor">Condutor</a>
+    <a href="#reativo">Fator de potência</a>
+  </nav>
+  <a class="link-docs" href="/docs">API</a>
+</header>
+
+<main id="inicio">
+
+  <section class="capa">
+    <div class="capa-texto">
+      <h1>Cinco contas que definem uma instalação elétrica, em um lugar só.</h1>
+      <p>Do consumo do chuveiro ao banco de capacitores da indústria. Você informa os dados de campo, o motor de cálculo em Java devolve o número e o critério que o determinou.</p>
+    </div>
+
+    <figure class="unifilar" aria-label="Diagrama unifilar com os módulos da plataforma">
+      <svg viewBox="0 0 1000 200" role="img">
+        <title>Diagrama unifilar: rede, medição, quadro de distribuição, cargas e geração solar</title>
+        <line class="barramento" x1="60" y1="100" x2="940" y2="100"/>
+
+        <g class="no" data-alvo="tarifa">
+          <circle cx="120" cy="100" r="26"/>
+          <text class="no-rotulo" x="120" y="152">Rede</text>
+          <text class="no-icone" x="120" y="107">~</text>
+        </g>
+
+        <g class="no" data-alvo="consumo">
+          <rect x="290" y="74" width="52" height="52" rx="4"/>
+          <text class="no-rotulo" x="316" y="152">Medição</text>
+          <text class="no-icone" x="316" y="107">kWh</text>
+        </g>
+
+        <g class="no" data-alvo="condutor">
+          <rect x="486" y="70" width="60" height="60" rx="4"/>
+          <text class="no-rotulo" x="516" y="152">Quadro</text>
+          <text class="no-icone" x="516" y="107">QDC</text>
+        </g>
+
+        <g class="no" data-alvo="reativo">
+          <circle cx="712" cy="100" r="26"/>
+          <text class="no-rotulo" x="712" y="152">Cargas</text>
+          <text class="no-icone" x="712" y="107">M</text>
+        </g>
+
+        <g class="no" data-alvo="solar">
+          <line class="ramal" x1="880" y1="100" x2="880" y2="52"/>
+          <rect x="850" y="22" width="60" height="30" rx="3"/>
+          <text class="no-rotulo" x="880" y="152">Solar</text>
+          <text class="no-icone" x="880" y="42">PV</text>
+        </g>
+      </svg>
+      <figcaption>Toque em um ponto do diagrama para abrir o módulo correspondente.</figcaption>
+    </figure>
+  </section>
+
+  <!-- CONSUMO -->
+  <section class="modulo" id="consumo">
+    <div class="modulo-cabeca">
+      <h2>Consumo por equipamento</h2>
+      <p>Monte a lista de cargas da instalação e veja quanto cada uma pesa na conta, já com a bandeira tarifária do mês.</p>
+    </div>
+
+    <div class="painel">
+      <form class="entradas" id="form-consumo" novalidate>
+        <div class="lista-equipamentos" id="lista-equipamentos"></div>
+        <button type="button" class="btn-secundario" id="add-equipamento">Adicionar equipamento</button>
+
+        <div class="campo-duplo">
+          <label>Tarifa da distribuidora (R$/kWh)
+            <input type="number" name="tarifaPorKwh" value="0.85" step="0.01" min="0.01" required>
+          </label>
+          <label>Bandeira do mês
+            <select name="bandeira">
+              <option value="VERDE">Verde</option>
+              <option value="AMARELA">Amarela</option>
+              <option value="VERMELHA_1">Vermelha 1</option>
+              <option value="VERMELHA_2">Vermelha 2</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-principal">Calcular consumo</button>
+      </form>
+
+      <div class="saidas" id="saida-consumo">
+        <p class="vazio">Adicione pelo menos um equipamento para ver o resultado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARIFA BRANCA -->
+  <section class="modulo" id="tarifa">
+    <div class="modulo-cabeca">
+      <h2>Convencional ou tarifa branca</h2>
+      <p>A tarifa branca cobra três preços conforme a hora do dia. Distribua seu consumo entre os postos e descubra qual modalidade sai mais barata.</p>
+    </div>
+
+    <div class="painel">
+      <form class="entradas" id="form-tarifa" novalidate>
+        <fieldset>
+          <legend>Consumo mensal por posto (kWh)</legend>
+          <div class="campo-triplo">
+            <label>Ponta<input type="number" name="consumoPontaKwh" value="40" step="1" min="0"></label>
+            <label>Intermediário<input type="number" name="consumoIntermediarioKwh" value="45" step="1" min="0"></label>
+            <label>Fora de ponta<input type="number" name="consumoForaPontaKwh" value="315" step="1" min="0"></label>
+          </div>
+        </fieldset>
+
+        <label>Tarifa convencional (R$/kWh)
+          <input type="number" name="tarifaConvencional" value="0.85" step="0.01" min="0.01">
+        </label>
+
+        <fieldset>
+          <legend>Tarifa branca (R$/kWh)</legend>
+          <div class="campo-triplo">
+            <label>Ponta<input type="number" name="tarifaPonta" value="1.60" step="0.01" min="0.01"></label>
+            <label>Intermediário<input type="number" name="tarifaIntermediaria" value="1.05" step="0.01" min="0.01"></label>
+            <label>Fora de ponta<input type="number" name="tarifaForaPonta" value="0.62" step="0.01" min="0.01"></label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn-principal">Comparar modalidades</button>
+      </form>
+
+      <div class="saidas" id="saida-tarifa">
+        <p class="vazio">Os valores iniciais já trazem um perfil residencial típico. Clique em comparar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLAR -->
+  <section class="modulo" id="solar">
+    <div class="modulo-cabeca">
+      <h2>Dimensionamento fotovoltaico</h2>
+      <p>Potência, quantidade de módulos, área de telhado, investimento e tempo de retorno a partir do consumo médio e da irradiação local.</p>
+    </div>
+
+    <div class="painel">
+      <form class="entradas" id="form-solar" novalidate>
+        <div class="campo-duplo">
+          <label>Consumo médio mensal (kWh)
+            <input type="number" name="consumoMedioMensalKwh" value="520" step="1" min="1">
+          </label>
+          <label>Custo de disponibilidade (kWh)
+            <select name="custoDisponibilidadeKwh">
+              <option value="30">30 — monofásico</option>
+              <option value="50" selected>50 — bifásico</option>
+              <option value="100">100 — trifásico</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="campo-duplo">
+          <label>Horas de sol pleno (h/dia)
+            <input type="number" name="horasSolPleno" value="4.8" step="0.1" min="2" max="8">
+          </label>
+          <label>Potência do módulo (W)
+            <input type="number" name="potenciaModuloW" value="550" step="5" min="100" max="1000">
+          </label>
+        </div>
+
+        <div class="campo-duplo">
+          <label>Performance ratio
+            <input type="number" name="performanceRatio" value="0.80" step="0.01" min="0.5" max="0.95">
+          </label>
+          <label>Tarifa (R$/kWh)
+            <input type="number" name="tarifaPorKwh" value="0.95" step="0.01" min="0.01">
+          </label>
+        </div>
+
+        <label>Custo do sistema (R$ por watt-pico)
+          <input type="number" name="custoPorWattPico" value="3.80" step="0.1" min="1" max="15">
+        </label>
+
+        <button type="submit" class="btn-principal">Dimensionar sistema</button>
+      </form>
+
+      <div class="saidas" id="saida-solar">
+        <p class="vazio">Informe o consumo e a irradiação para dimensionar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONDUTOR -->
+  <section class="modulo" id="condutor">
+    <div class="modulo-cabeca">
+      <h2>Condutor e disjuntor</h2>
+      <p>Dois critérios da NBR 5410 rodam em paralelo: capacidade de condução e queda de tensão. Vence sempre a maior seção.</p>
+    </div>
+
+    <div class="painel">
+      <form class="entradas" id="form-condutor" novalidate>
+        <div class="campo-duplo">
+          <label>Potência do circuito (W)
+            <input type="number" name="potenciaW" value="6000" step="100" min="1">
+          </label>
+          <label>Tensão (V)
+            <input type="number" name="tensaoV" value="220" step="1" min="110">
+          </label>
+        </div>
+
+        <div class="campo-duplo">
+          <label>Sistema
+            <select name="sistema">
+              <option value="MONOFASICO" selected>Monofásico</option>
+              <option value="BIFASICO">Bifásico</option>
+              <option value="TRIFASICO">Trifásico</option>
+            </select>
+          </label>
+          <label>Fator de potência
+            <input type="number" name="fatorPotencia" value="1.0" step="0.01" min="0.5" max="1">
+          </label>
+        </div>
+
+        <label>Método de instalação
+          <select name="metodoInstalacao">
+            <option value="B1" selected>B1 — condutores em eletroduto na alvenaria</option>
+            <option value="B2">B2 — cabo multipolar em eletroduto na alvenaria</option>
+            <option value="C">C — cabo sobre parede ou eletrocalha</option>
+          </select>
+        </label>
+
+        <div class="campo-duplo">
+          <label>Comprimento do circuito (m)
+            <input type="number" name="comprimentoM" value="35" step="1" min="1">
+          </label>
+          <label>Queda de tensão máxima (%)
+            <input type="number" name="quedaTensaoMaximaPercentual" value="4" step="0.5" min="1" max="7">
+          </label>
+        </div>
+
+        <button type="submit" class="btn-principal">Dimensionar condutor</button>
+      </form>
+
+      <div class="saidas" id="saida-condutor">
+        <p class="vazio">Informe a carga e o trajeto do circuito.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FATOR DE POTÊNCIA -->
+  <section class="modulo" id="reativo">
+    <div class="modulo-cabeca">
+      <h2>Correção de fator de potência</h2>
+      <p>Quanto de potência reativa capacitiva instalar para sair da faixa de cobrança e liberar capacidade do transformador.</p>
+    </div>
+
+    <div class="painel">
+      <form class="entradas" id="form-reativo" novalidate>
+        <div class="campo-duplo">
+          <label>Potência ativa (kW)
+            <input type="number" name="potenciaAtivaKw" value="150" step="1" min="1">
+          </label>
+          <label>Tensão (V)
+            <input type="number" name="tensaoV" value="380" step="1" min="110">
+          </label>
+        </div>
+
+        <div class="campo-duplo">
+          <label>Fator de potência atual
+            <input type="number" name="fatorPotenciaAtual" value="0.78" step="0.01" min="0.3" max="0.99">
+          </label>
+          <label>Fator de potência desejado
+            <input type="number" name="fatorPotenciaDesejado" value="0.95" step="0.01" min="0.92" max="1">
+          </label>
+        </div>
+
+        <label>Sistema
+          <select name="sistema">
+            <option value="TRIFASICO" selected>Trifásico</option>
+            <option value="MONOFASICO">Monofásico</option>
+          </select>
+        </label>
+
+        <div class="campo-duplo">
+          <label>Consumo mensal (kWh)
+            <input type="number" name="consumoMensalKwh" value="48000" step="100" min="0">
+          </label>
+          <label>Tarifa (R$/kWh)
+            <input type="number" name="tarifaPorKwh" value="0.55" step="0.01" min="0">
+          </label>
+        </div>
+
+        <button type="submit" class="btn-principal">Calcular correção</button>
+      </form>
+
+      <div class="saidas" id="saida-reativo">
+        <p class="vazio">Informe a carga da planta e o fator de potência medido.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="modulo historico-secao" id="historico">
+    <div class="modulo-cabeca">
+      <h2>Cálculos recentes</h2>
+      <p>Tudo o que passa pela API fica registrado no banco. Este painel lê os vinte últimos registros.</p>
+    </div>
+    <div class="painel-simples">
+      <button type="button" class="btn-secundario" id="carregar-historico">Atualizar histórico</button>
+      <div id="saida-historico"><p class="vazio">Nenhum cálculo carregado ainda.</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <p><strong>Ampère Hub</strong> — projeto de portfólio. Backend em Java 21 com Spring Boot, frontend em HTML e CSS.</p>
+  <p class="aviso">Os resultados são estimativas para estudo preliminar e não substituem projeto assinado por profissional habilitado, nem dispensam a consulta às normas ABNT e às regras da distribuidora local.</p>
+</footer>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
