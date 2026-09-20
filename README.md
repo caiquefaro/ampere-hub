@@ -4,6 +4,11 @@ Plataforma web que reúne cinco cálculos do dia a dia de quem trabalha com inst
 
 O motor de cálculo é escrito em Java com Spring Boot e exposto como API REST. A interface é HTML e CSS puros, sem framework de frontend.
 
+	
+Demonstração online	https://ampere-hub.onrender.com/
+Documentação da API	https://ampere-hub.onrender.com/docs
+Código-fonte	https://github.com/caiquefaro/ampere-hub
+
 ---
 
 ## Por que este projeto existe
